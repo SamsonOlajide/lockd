@@ -9,8 +9,16 @@ export default {
   theme: {
     extend: {
       colors: {
+        'oat': '#E9E0CB',
+        'black': '#000000',
         background: "var(--background)",
         foreground: "var(--foreground)",
+      },
+      fontFamily: {
+        'pixel': "var(--font-pixel)",
+        'pixel-bold': "var(--font-pixel-bold)",
+        'pixel-medium': "var(--font-pixel-medium)",
+        'pixel-semibold': "var(--font-pixel-semibold)",
       },
     },
   },
