@@ -1,8 +1,34 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 
 
 export default function Signup() {
+    const [formData, setFormData] = useState({
+        username: '',
+        email: '',
+        password: ''
+    });
+
+    const handleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({
+            ...formData,[e.target.name]: e.target.value
+        });
+    }
+
+    const handleSubmit = async (e : React.FormEvent) => {
+        e.preventDefault();
+        const response = await fetch('/api/signup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData),
+        });
+        const data = await response.json();
+        console.log(data);
+    }
     return (
         <>
             <Link href="/">
@@ -28,20 +54,20 @@ export default function Signup() {
                         <hr style={{borderColor: 'black'}} className="w-[200px]"/>
                     </div>
 
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="mb-2">
-                            <label className="font-inter block" htmlFor="name">Name</label>
-                            <input className="font-inter border-black border-[0.5px] mb-2 shadow-md h-[41px] w-[400px] pl-2 bg-oat rounded-md" type="text" id="name" name="name" />
+                            <label className="font-inter block" htmlFor="name">Username</label>
+                            <input onChange={handleChange} className="font-inter border-black border-[0.5px] mb-2 shadow-md h-[41px] w-[400px] pl-2 bg-oat rounded-md" type="text" id="username" name="username" />
                         </div>
 
                         <div className="mb-2">
                             <label className="font-inter block"  htmlFor="email">Email</label>
-                            <input type="email" id="email" name="email" className="border-black border-[0.5px] mb-2 shadow-md h-[41px] w-[400px] pl-2 bg-oat rounded-md"/>
+                            <input onChange={handleChange} type="email" id="email" name="email" className="border-black border-[0.5px] mb-2 shadow-md h-[41px] w-[400px] pl-2 bg-oat rounded-md"/>
                         </div>
 
                         <div className="mb-2">
                             <label className="font-inter block" htmlFor="password">Password</label>
-                            <input type="password" id="password" name="password" className="border-black border-[0.5px] shadow-md h-[41px] w-[400px] mb-[50px] pl-2 bg-oat rounded-md"/>
+                            <input onChange={handleChange} type="password" id="password" name="password" className="border-black border-[0.5px] shadow-md h-[41px] w-[400px] mb-[50px] pl-2 bg-oat rounded-md"/>
                         </div>
                         <button type="submit" className="bg-black w-[400px] text-oat font-pixel text-[28px] rounded-md shadow-md h-[48px]">Sign Up</button>
                     </form>

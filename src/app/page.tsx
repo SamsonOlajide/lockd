@@ -1,16 +1,61 @@
+'use client'
 import Image from "next/image";
 import { ChevronDown,Heart,LoaderCircle } from 'lucide-react';
 import Link from "next/link";
+import { useState,useEffect } from "react";
+import { useRouter } from "next/navigation";
+import jwt from 'jsonwebtoken';
+
 
 
 export default function Home() {
+  const [user, setUser] = useState<{ token: string; } | null>(null);
+  const [userName, setUserName] = useState<string>('');
+  const router = useRouter();
+
+  useEffect(() => {
+    const user = localStorage.getItem('user');
+    if(user){
+      const parsedUser = JSON.parse(user);
+      const decoded = jwt.decode(parsedUser.token);
+      if (typeof decoded !== 'string' && decoded && 'username' in decoded) {
+        setUserName(decoded.username);
+      }
+      setUser(parsedUser);
+      console.log(userName);
+    } 
+  },[]);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
+  };
+
+  const handleDashboard = () => {
+    router.push('/dashboard');
+  }
+
+
+  // getUserName()
+
+
   return (
     <>
+
       <div className="flex flex-col justify-between h-screen">
         <div className="flex justify-end mt-3 mr-3">
-          <Link href="/signup">
-            <button className="font-pixel text-[24px] bg-black text-oat w-40 py-1 rounded-xl">Enter</button>
-          </Link>
+          {user ? (
+            <>
+              <p className="font-pixel text-[24px] text-black">Welcome, {userName}</p>
+              <button onClick={handleLogout} className="font-pixel text-[24px] bg-black text-oat w-40 py-1 rounded-xl">Logout</button>
+              <button onClick={handleDashboard} className="font-pixel text-[24px] bg-black text-oat w-40 py-1 rounded-xl">Dashboard</button>
+            </>
+          ) : (
+            <Link href="/signup">
+              <button className="font-pixel text-[24px] bg-black text-oat w-40 py-1 rounded-xl">Enter</button>
+            </Link>
+          )}
+
         </div>
         <div className="flex justify-center items-center h-screen">
           <h1 className='font-pixel text-[128px]'>LOCKD.</h1>

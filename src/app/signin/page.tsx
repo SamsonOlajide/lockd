@@ -1,8 +1,40 @@
+'use client'
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
+export default function Signin() {
+    const [formData, setFormData] = useState({enail: '', password: ''});
+    const [error, setError] = useState('');
+    const router = useRouter();
+
+    const handleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+        setFormData({...formData,[e.target.name]: e.target.value});
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        const response = await fetch('/api/signin', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(formData),
+        })
+        const data = await response.json();
+        console.log(data);
+        if (response.ok) {
+            localStorage.setItem('user',JSON.stringify({token: data.token}));
+            router.push('/');
+        }else{
+            setError(data.error);
+            console.log(data.error);
+        }
+    }
+    
 
 
-export default function Signup() {
+
+
     return (
         <>
             <Link href="/">
@@ -28,10 +60,10 @@ export default function Signup() {
                         <hr style={{borderColor: 'black'}} className="w-[200px]"/>
                     </div>
 
-                    <form>
+                    <form onSubmit={handleSubmit}>
                         <div className="mb-2">
                             <label className="font-inter block"  htmlFor="email">Email</label>
-                            <input type="email" id="email" name="email" className="border-black border-[0.5px] mb-2 shadow-md h-[41px] w-[400px] pl-2 bg-oat rounded-md"/>
+                            <input type="email" onChange={handleChange} id="email" name="email" className="border-black border-[0.5px] mb-2 shadow-md h-[41px] w-[400px] pl-2 bg-oat rounded-md"/>
                         </div>
 
                         <div className="mb-2">
@@ -39,7 +71,7 @@ export default function Signup() {
                                 <label className="font-inter" htmlFor="password">Password</label>
                                 <p className="justify-center text-[13px] items-center content-center font-inter">Forgot Password?</p>
                             </div>                    
-                            <input type="password" id="password" name="password" className="border-black border-[0.5px] shadow-md h-[41px] w-[400px] mb-[50px] pl-2 bg-oat rounded-md"/>
+                            <input type="password" onChange={handleChange} id="password" name="password" className="border-black border-[0.5px] shadow-md h-[41px] w-[400px] mb-[50px] pl-2 bg-oat rounded-md"/>
                         </div>
                         <button type="submit" className="bg-black w-[400px] text-oat font-pixel text-[28px] rounded-md shadow-md h-[48px]">Sign In</button>
                     </form>
